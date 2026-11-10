@@ -113,6 +113,7 @@ if not config["danger_zone"]["dont_read_pyshrc"]:
 
 
 def main(argv="noargs"):
+	change = False
 	while True:
 		try:
 			if not change:
