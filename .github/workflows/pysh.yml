@@ -28,7 +28,7 @@ jobs:
       - name: Build pysh windows
         if: runner.os == 'Windows'
         run: |
-          pyinstaller pysh.spec
+          pyinstaller pysh.py --onefile --icon=logo.ico
       - name: Build pysh macos
         if: runner.os == 'macOS'
         run: |
