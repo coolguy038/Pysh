@@ -119,9 +119,9 @@ def main(argv="noargs"):
 			if not change:
 				temp = colored(f"PT -> {Path.cwd()}> ", config["prompt_color"])
 			prompter = temp
-			cmd = input(prompter).strip()
 
-			commands = [c.strip() for c in re.split(r"&&|;|&", cmd) if c.strip()]
+			cmd = argv if argv != "noargs" else input(prompter).strip()
+			commands = argv if isinstance(cmd, list) else [c.strip() for c in re.split(r"&&|;|&", cmd) if c.strip()]
 			has_and = "&&" in commands
 			success = True
 			for command in commands:
@@ -353,6 +353,6 @@ def main(argv="noargs"):
 
 
 if len(sys.argv) > 1:
-	main(sys.argv[2:])
+	main(sys.argv[1:])
 else:
 	main()
