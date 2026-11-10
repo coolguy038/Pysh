@@ -110,44 +110,47 @@ elif config["entry_message"] == "on":
 change = False
 if not config["danger_zone"]["dont_read_pyshrc"]:
 	exec(config_py_path.read_text())
-while True:
-	try:
-		if not change:
-			temp = colored(f"PT -> {Path.cwd()}> ", config["prompt_color"])
-		prompter = temp
-		cmd = input(prompter).strip()
 
-		commands = [c.strip() for c in re.split(r"&&|;|&", cmd) if c.strip()]
-		has_and = "&&" in commands
-		success = True
-		for command in commands:
-			if command == "exit":
-				print("Goodbye!")
-				sys.exit()
-			elif command == "coolguy38 is sigma":
-				print("Yes, im sigma B)")
-			elif command == "cd" or command == "pwd":
-				print(Path.cwd())
 
-			elif command.startswith("cd "):
-				path = command[3:].strip().strip("'\"")
+def main(argv="noargs"):
+	while True:
+		try:
+			if not change:
+				temp = colored(f"PT -> {Path.cwd()}> ", config["prompt_color"])
+			prompter = temp
+			cmd = input(prompter).strip()
 
-				try:
-					os.chdir(expand_vars(path))
+			commands = [c.strip() for c in re.split(r"&&|;|&", cmd) if c.strip()]
+			has_and = "&&" in commands
+			success = True
+			for command in commands:
+				if command == "exit":
+					print("Goodbye!")
+					sys.exit()
+				elif command == "coolguy38 is sigma":
+					print("Yes, im sigma B)")
+				elif command == "cd" or command == "pwd":
+					print(Path.cwd())
 
-				except Exception as e:
-					print(colored(f"{type(e)} happened with message {e}.", "red"))
-					success = False
+				elif command.startswith("cd "):
+					path = command[3:].strip().strip("'\"")
 
-			elif command.startswith("prompt "):
-				temp = command[7:] + " "
-				change = True
-			elif command.lower() == "reset prompt" or command.lower() == "prompt":
-				change = False
+					try:
+						os.chdir(expand_vars(path))
 
-			elif command.lower() == "help":
-				print(
-					"""- help: explains every command
+					except Exception as e:
+						print(colored(f"{type(e)} happened with message {e}.", "red"))
+						success = False
+
+				elif command.startswith("prompt "):
+					temp = command[7:] + " "
+					change = True
+				elif command.lower() == "reset prompt" or command.lower() == "prompt":
+					change = False
+
+				elif command.lower() == "help":
+					print(
+						"""- help: explains every command
 - coolguy38 is sigma: responds
 - reset prompt: Resets the prompt
 - prompt: Also resets the prompt
@@ -167,181 +170,188 @@ while True:
 - cd <path>: Changes the current directory to <path>
 - cat <file>: Prints the contents of <file>
 - <file>.pysh: Runs the .pysh file"""
-				)
-
-			elif command.startswith("pyexe "):
-				pyn = command[6:].strip()
-				pynn = subprocess.run(
-					[config["shell"], config["arg"], f"pyinstaller --onefile {pyn}"], stdin=sys.stdin, stdout=sys.stdout, stderr=sys.stderr
-				)
-				if pynn.returncode != 0:
-					down = input("Oh no! Pyinstaller failed. Download? (y/N)")
-					match down.lower():
-						case "y":
-							subprocess.run(
-								[config["shell"], config["arg"], "pip install pyinstaller"],
-								stdin=sys.stdin,
-								stdout=sys.stdout,
-								stderr=sys.stderr,
-							)
-						case "n":
-							print("Ok")
-					success = False
-			elif command.startswith("pypub "):
-				if config["use_uv"]:
-					pyb = command[6:].strip()
-					if config["use_uv-publish"]:
-						pybb = subprocess.run(
-							f"uv build && uv-publish && uv pip install --upgrade --system {pyb}",
-							stdin=sys.stdin,
-							stdout=sys.stdout,
-							stderr=sys.stderr,
-							shell=True,
-						)
-					else:
-						pybb = subprocess.run(
-							f"uv build && uv publish && uv pip install --upgrade --system {pyb}",
-							stdin=sys.stdin,
-							stdout=sys.stdout,
-							stderr=sys.stderr,
-							shell=True,
-						)
-				else:
-					pyb = command[6:].strip()
-					pybb = subprocess.run(
-						f"python -m build && python -m twine check dist/* && python -m twine upload dist/* && pip install --upgrade {pyb}",
-						stdin=sys.stdin,
-						stdout=sys.stdout,
-						stderr=sys.stderr,
-						shell=True,
 					)
-				if pybb.returncode != 0:
-					if config["use_uv"]:
-						downl = input("Oh no! Something failed! Download uv and uv-publish? (y/N)")
-						match downl.lower():
+
+				elif command.startswith("pyexe "):
+					pyn = command[6:].strip()
+					pynn = subprocess.run(
+						[config["shell"], config["arg"], f"pyinstaller --onefile {pyn}"], stdin=sys.stdin, stdout=sys.stdout, stderr=sys.stderr
+					)
+					if pynn.returncode != 0:
+						down = input("Oh no! Pyinstaller failed. Download? (y/N)")
+						match down.lower():
 							case "y":
 								subprocess.run(
-									"pipx install uv && uv tool install uv-publish", stdin=sys.stdin, stdout=sys.stdout, stderr=sys.stderr, shell=True
+									[config["shell"], config["arg"], "pip install pyinstaller"],
+									stdin=sys.stdin,
+									stdout=sys.stdout,
+									stderr=sys.stderr,
 								)
 							case "n":
 								print("Ok")
-
+						success = False
+				elif command.startswith("pypub "):
+					if config["use_uv"]:
+						pyb = command[6:].strip()
+						if config["use_uv-publish"]:
+							pybb = subprocess.run(
+								f"uv build && uv-publish && uv pip install --upgrade --system {pyb}",
+								stdin=sys.stdin,
+								stdout=sys.stdout,
+								stderr=sys.stderr,
+								shell=True,
+							)
+						else:
+							pybb = subprocess.run(
+								f"uv build && uv publish && uv pip install --upgrade --system {pyb}",
+								stdin=sys.stdin,
+								stdout=sys.stdout,
+								stderr=sys.stderr,
+								shell=True,
+							)
 					else:
-						downl = input("Oh no! Something failed! Download build and twine? (y/N)")
-						match downl.lower():
-							case "y":
-								subprocess.run("pipx install build twine", stdin=sys.stdin, stdout=sys.stdout, stderr=sys.stderr, shell=True)
-							case "n":
-								print("Ok")
-					success = False
-			elif command.startswith("pack get "):
-				getd = command[9:].strip()
-				subprocess.run(f"{config['package_manager']} {getd}", stdin=sys.stdin, stdout=sys.stdout, stderr=sys.stderr, shell=True)
-			elif command == "whoami":
-				print(f"You are {config['User']}")
+						pyb = command[6:].strip()
+						pybb = subprocess.run(
+							f"python -m build && python -m twine check dist/* && python -m twine upload dist/* && pip install --upgrade {pyb}",
+							stdin=sys.stdin,
+							stdout=sys.stdout,
+							stderr=sys.stderr,
+							shell=True,
+						)
+					if pybb.returncode != 0:
+						if config["use_uv"]:
+							downl = input("Oh no! Something failed! Download uv and uv-publish? (y/N)")
+							match downl.lower():
+								case "y":
+									subprocess.run(
+										"pipx install uv && uv tool install uv-publish",
+										stdin=sys.stdin,
+										stdout=sys.stdout,
+										stderr=sys.stderr,
+										shell=True,
+									)
+								case "n":
+									print("Ok")
 
-			elif command.endswith(")"):
-				try:
-					exec(command)
-				except NameError:
-					print(colored(f"Command {command} doesnt exist", "red"))
-					success = False
-			elif command == "os":
-				print(system)
+						else:
+							downl = input("Oh no! Something failed! Download build and twine? (y/N)")
+							match downl.lower():
+								case "y":
+									subprocess.run("pipx install build twine", stdin=sys.stdin, stdout=sys.stdout, stderr=sys.stderr, shell=True)
+								case "n":
+									print("Ok")
+						success = False
+				elif command.startswith("pack_get "):
+					getd = command[9:].strip()
+					subprocess.run(f"{config['package_manager']} {getd}", stdin=sys.stdin, stdout=sys.stdout, stderr=sys.stderr, shell=True)
+				elif command == "whoami":
+					print(f"You are {config['User']}")
 
-			elif command.startswith("view "):
-				viewed = command[5:].strip()
-
-				viewer = subprocess.run(
-					f"pygmentize {expand_vars(viewed)}", stdin=sys.stdin, stdout=sys.stdout, stderr=sys.stderr, shell=True, text=True
-				)
-				if viewer.returncode != 0:
-					print(colored("File not found: Are you in the correct directory? Or is the file nonexistent?", "red"))
-					success = False
-			elif command.startswith("cat "):
-				file = command[4:].strip()
-
-				try:
-					print(expand_vars(Path(file).read_text()))
-				except FileNotFoundError:
-					print(colored(f"File {file} not found", "red"))
-					success = False
-			elif command.startswith("echo "):
-				echoed = command[5:].strip()
-				print(expand_vars(echoed))
-			elif command in ["ls", "dir"]:
-				path = "."
-				try:
-					for entry in os.listdir(path):
-						print(entry)
-				except FileNotFoundError:
-					print(f"Directory {path} not found")
-					success = False
-				except PermissionError:
-					print(f"Permission denied to access {path}. Make sure you have permissions to view this directory.")
-					success = False
-			elif command.lower().startswith("ls "):
-				pather = command[3:].strip()
-				path = expand_vars(pather.strip("'\""))
-				try:
-					for entry in os.listdir(path):
-						print(entry)
-				except FileNotFoundError:
-					print(f"Directory {path} not found")
-					success = False
-				except PermissionError:
-					print(f"Permission denied to access {path}. Make sure you have permissions to view this directory.")
-					success = False
-			elif command.lower() == "setup":
-				print("Setting up the python terminal...")
-				subprocess.run(
-					[config["shell"], config["arg"], "pip install --upgrade pygments "], stdin=sys.stdin, stdout=sys.stdout, stderr=sys.stderr
-				)
-			elif command.endswith(".pysh") or command.endswith(".py") and not command.startswith("python"):
-				try:
-					exec(Path(command).read_text())
-				except FileNotFoundError:
-					print(colored(f"File {command} not found", "red"))
-					success = False
-
-			elif command.startswith("md "):
-				makedir = command[3:].strip().strip("'\"")
-				try:
-					Path(makedir).mkdir(exist_ok=True, parents=True)
-				except PermissionError:
-					print(f"You can't make a directory in {Path.cwd()}")
-					success = False
-			elif command.startswith("mkdir "):
-				makedir = command[6:].strip().strip("'\"")
-				try:
-					Path(makedir).mkdir(exist_ok=True, parents=True)
-				except PermissionError:
-					print(f"You can't make a directory in {Path.cwd()}")
-					success = False
-			elif command == "time":
-				print(time.strftime("%I:%M %p"))
-			elif command in ["cls", "clear"]:
-				subprocess.run("cls" if platform == "nt" else "clear", stdin=sys.stdin, stdout=sys.stdout, stderr=sys.stderr, shell=True)
-
-			else:
-				if config["AUTOCD"]:
+				elif command.endswith(")"):
 					try:
-						os.chdir(expand_vars(command))
-					except Exception:
+						exec(command)
+					except NameError:
+						print(colored(f"Command {command} doesnt exist", "red"))
+					success = False
+				elif command == "os":
+					print(system)
+
+				elif command.startswith("view "):
+					viewed = command[5:].strip()
+
+					viewer = subprocess.run(
+						f"pygmentize {expand_vars(viewed)}", stdin=sys.stdin, stdout=sys.stdout, stderr=sys.stderr, shell=True, text=True
+					)
+					if viewer.returncode != 0:
+						print(colored("File not found: Are you in the correct directory? Or is the file nonexistent?", "red"))
+						success = False
+				elif command.startswith("cat "):
+					file = command[4:].strip()
+
+					try:
+						print(expand_vars(Path(file).read_text()))
+					except FileNotFoundError:
+						print(colored(f"File {file} not found", "red"))
+						success = False
+				elif command.startswith("echo "):
+					echoed = command[5:].strip()
+					print(expand_vars(echoed))
+				elif command in ["ls", "dir"]:
+					path = "."
+					try:
+						for entry in os.listdir(path):
+							print(entry)
+					except FileNotFoundError:
+						print(f"Directory {path} not found")
+						success = False
+					except PermissionError:
+						print(f"Permission denied to access {path}. Make sure you have permissions to view this directory.")
+						success = False
+				elif command.lower().startswith("ls "):
+					pather = command[3:].strip()
+					path = expand_vars(pather.strip("'\""))
+					try:
+						for entry in os.listdir(path):
+							print(entry)
+					except FileNotFoundError:
+						print(f"Directory {path} not found")
+						success = False
+					except PermissionError:
+						print(f"Permission denied to access {path}. Make sure you have permissions to view this directory.")
+						success = False
+
+				elif command.endswith(".pysh") or command.endswith(".py") and not command.startswith("python"):
+					try:
+						exec(Path(command).read_text())
+					except FileNotFoundError:
+						print(colored(f"File {command} not found", "red"))
+						success = False
+
+				elif command.startswith("md "):
+					makedir = command[3:].strip().strip("'\"")
+					try:
+						Path(makedir).mkdir(exist_ok=True, parents=True)
+					except PermissionError:
+						print(f"You can't make a directory in {Path.cwd()}")
+						success = False
+				elif command.startswith("mkdir "):
+					makedir = command[6:].strip().strip("'\"")
+					try:
+						Path(makedir).mkdir(exist_ok=True, parents=True)
+					except PermissionError:
+						print(f"You can't make a directory in {Path.cwd()}")
+						success = False
+				elif command == "time":
+					print(time.strftime("%I:%M %p"))
+				elif command in ["cls", "clear"]:
+					subprocess.run("cls" if platform == "nt" else "clear", stdin=sys.stdin, stdout=sys.stdout, stderr=sys.stderr, shell=True)
+
+				else:
+					if config["AUTOCD"]:
+						try:
+							os.chdir(expand_vars(command))
+						except Exception:
+							args = shlex.split(command)
+							subprocess.run(args, stdin=sys.stdin, stdout=sys.stdout, stderr=sys.stderr)
+					else:
 						args = shlex.split(command)
 						subprocess.run(args, stdin=sys.stdin, stdout=sys.stdout, stderr=sys.stderr)
-				else:
-					args = shlex.split(command)
-					subprocess.run(args, stdin=sys.stdin, stdout=sys.stdout, stderr=sys.stderr)
-			if not success and has_and:
-				break
+				if not success and has_and:
+					break
 
-	except KeyboardInterrupt:
-		print("^C")
-		continue
-	except EOFError:
-		print("^D")
-		print("Goodbye!")
-		sys.exit()
-	except Exception as e:
-		print(colored(f"Error {e} with type {type(e)}", "red"))
+		except KeyboardInterrupt:
+			print("^C")
+			continue
+		except EOFError:
+			print("^D")
+			print("Goodbye!")
+			sys.exit()
+		except Exception as e:
+			print(colored(f"Error {e} with type {type(e)}", "red"))
+		sys.argv = [sys.argv[0]]
+
+
+if len(sys.argv) > 1:
+	main(sys.argv[2:])
+else:
+	main()
