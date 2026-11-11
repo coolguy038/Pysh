@@ -140,7 +140,7 @@ def main(argv="noargs"):
 						os.chdir(expand_vars(path))
 
 					except Exception as e:
-						print(colored(f"Pysh: cd Error: {type(e)} happened with message {e}.", "red"))
+						print(colored(f"Pysh: cd Error: {e}", "red"))
 						success = False
 
 				elif command.startswith("prompt "):
@@ -348,6 +348,7 @@ def main(argv="noargs"):
 						subprocess.run(args, stdin=sys.stdin, stdout=sys.stdout, stderr=sys.stderr)
 				if not success and has_and:
 					break
+				argv = "noargs"
 
 		except KeyboardInterrupt:
 			print("^C")
@@ -358,10 +359,11 @@ def main(argv="noargs"):
 			sys.exit()
 		except Exception as e:
 			print(colored(f"Pysh: Error: {e}", "red"))
-		sys.argv = [sys.argv[0]]
 
 
 if len(sys.argv) > 1:
-	main(sys.argv[1:])
+	tempargs = sys.argv[1:]
+
+	main(tempargs)
 else:
 	main()
