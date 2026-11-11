@@ -140,7 +140,7 @@ def main(argv="noargs"):
 						os.chdir(expand_vars(path))
 
 					except Exception as e:
-						print(colored(f"{type(e)} happened with message {e}.", "red"))
+						print(colored(f"Pysh: cd Error: {type(e)} happened with message {e}.", "red"))
 						success = False
 
 				elif command.startswith("prompt "):
@@ -252,7 +252,7 @@ def main(argv="noargs"):
 					try:
 						exec(command)
 					except NameError:
-						print(colored(f"Command {command} doesnt exist", "red"))
+						print(colored(f"Pysh: Error: Python command {command} doesnt exist", "red"))
 					success = False
 				elif command == "os":
 					print(system)
@@ -264,7 +264,7 @@ def main(argv="noargs"):
 						f"pygmentize {expand_vars(viewed)}", stdin=sys.stdin, stdout=sys.stdout, stderr=sys.stderr, shell=True, text=True
 					)
 					if viewer.returncode != 0:
-						print(colored("File not found: Are you in the correct directory? Or is the file nonexistent?", "red"))
+						print(colored("Pysh: view Error: Failed to view file", "red"))
 						success = False
 				elif command.startswith("cat "):
 					file = command[4:].strip()
@@ -272,7 +272,7 @@ def main(argv="noargs"):
 					try:
 						print(expand_vars(Path(file).read_text()))
 					except FileNotFoundError:
-						print(colored(f"File {file} not found", "red"))
+						print(colored(f"Pysh: cat Error: File {file} not found", "red"))
 						success = False
 				elif command.startswith("echo "):
 					echoed = command[5:].strip()
@@ -283,10 +283,15 @@ def main(argv="noargs"):
 						for entry in os.listdir(path):
 							print(entry)
 					except FileNotFoundError:
-						print(f"Directory {path} not found")
+						print(colored(f"Pysh: {command} Error: Directory {path} not found", "red"))
 						success = False
 					except PermissionError:
-						print(f"Permission denied to access {path}. Make sure you have permissions to view this directory.")
+						print(
+							colored(
+								f"Pysh: {command} Error: Permission denied to access {path}. Make sure you have permissions to view this directory.",
+								"red",
+							)
+						)
 						success = False
 				elif command.lower().startswith("ls "):
 					pather = command[3:].strip()
@@ -295,17 +300,21 @@ def main(argv="noargs"):
 						for entry in os.listdir(path):
 							print(entry)
 					except FileNotFoundError:
-						print(f"Directory {path} not found")
+						print(colored(f"Pysh: ls Error: Directory {path} not found", "red"))
 						success = False
 					except PermissionError:
-						print(f"Permission denied to access {path}. Make sure you have permissions to view this directory.")
+						print(
+							colored(
+								f"Pysh: ls Error: Permission denied to access {path}. Make sure you have permissions to view this directory.", "red"
+							)
+						)
 						success = False
 
 				elif command.endswith(".pysh") or command.endswith(".py") and not command.startswith("python"):
 					try:
 						exec(Path(command).read_text())
 					except FileNotFoundError:
-						print(colored(f"File {command} not found", "red"))
+						print(colored(f"Pysh: Error: File {command} not found", "red"))
 						success = False
 
 				elif command.startswith("md "):
@@ -313,14 +322,14 @@ def main(argv="noargs"):
 					try:
 						Path(makedir).mkdir(exist_ok=True, parents=True)
 					except PermissionError:
-						print(f"You can't make a directory in {Path.cwd()}")
+						print(colored(f"Pysh: md Error: You can't make a directory in {Path.cwd()}", "red"))
 						success = False
 				elif command.startswith("mkdir "):
 					makedir = command[6:].strip().strip("'\"")
 					try:
 						Path(makedir).mkdir(exist_ok=True, parents=True)
 					except PermissionError:
-						print(f"You can't make a directory in {Path.cwd()}")
+						print(colored(f"Pysh: mkdir Error: You can't make a directory in {Path.cwd()}", "red"))
 						success = False
 				elif command == "time":
 					print(time.strftime("%I:%M %p"))
@@ -348,7 +357,7 @@ def main(argv="noargs"):
 			print("Goodbye!")
 			sys.exit()
 		except Exception as e:
-			print(colored(f"Error {e} with type {type(e)}", "red"))
+			print(colored(f"Pysh: Error: {e}", "red"))
 		sys.argv = [sys.argv[0]]
 
 
