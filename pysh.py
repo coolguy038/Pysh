@@ -347,29 +347,31 @@ def main(argv="noargs"):
 
 
 if len(sys.argv) > 1:
-	if sys.argv[1] != "-c":
-		try:
-			exec(Path(sys.argv[1]).read_text())
-		except Exception as e:
-			print(colored(f"Pysh: Error: Error while executing file {sys.argv[1]}: {e}", "red"))
+	if sys.argv[1] == "-c":
+		if config["entry_message"] == "legacy":
+			print(colored(f"Welcome to the python terminal, {config['User']}!", config["prompt_color"]))
+		elif config["entry_message"] == "on":
+			print(colored(f"Welcome to Pysh, {config['User']}!", config["prompt_color"]))
+		if not config["danger_zone"]["dont_read_pyshrc"]:
+			try:
+				exec(config_py_path.read_text())
+			except Exception as e:
+				print(colored(f"Pysh: Error: Error when executing pyshrc: {e}", "red"))
+		tempargs = sys.argv[2:]
+		main(tempargs)
+
 	elif sys.argv[1] == "-h":
 		main(["help"])
 	else:
 		if sys.argv[1].startswith("-"):
 			print(f"Pysh: Error: Unknown arg {sys.argv[1]}.")
-
 		else:
-			if config["entry_message"] == "legacy":
-				print(colored(f"Welcome to the python terminal, {config['User']}!", config["prompt_color"]))
-			elif config["entry_message"] == "on":
-				print(colored(f"Welcome to Pysh, {config['User']}!", config["prompt_color"]))
-			if not config["danger_zone"]["dont_read_pyshrc"]:
-				try:
-					exec(config_py_path.read_text())
-				except Exception as e:
-					print(colored(f"Pysh: Error: Error when executing pyshrc: {e}", "red"))
-		tempargs = sys.argv[2:]
-		main(tempargs)
+			try:
+				exec(Path(sys.argv[1]).read_text())
+			except Exception as e:
+				print(colored(f"Pysh: Error: Error while executing file {sys.argv[1]}: {e}", "red"))
+
+
 else:
 	if config["entry_message"] == "legacy":
 		print(colored(f"Welcome to the python terminal, {config['User']}!", config["prompt_color"]))
