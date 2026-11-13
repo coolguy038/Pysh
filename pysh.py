@@ -103,12 +103,6 @@ def expand_vars(text):
 if config["danger_zone"]["dont_start"]:
 	sys.exit()
 
-if config["entry_message"] == "legacy":
-	print(colored(f"Welcome to the python terminal, {config['User']}!", config["prompt_color"]))
-elif config["entry_message"] == "on":
-	print(colored(f"Welcome to Pysh, {config['User']}!", config["prompt_color"]))
-change = False
-
 
 def main(argv="noargs"):
 	change = False
@@ -365,6 +359,10 @@ if len(sys.argv) > 1:
 			print(f"Pysh: Error: Unknown arg {sys.argv[1]}.")
 
 		else:
+			if config["entry_message"] == "legacy":
+				print(colored(f"Welcome to the python terminal, {config['User']}!", config["prompt_color"]))
+			elif config["entry_message"] == "on":
+				print(colored(f"Welcome to Pysh, {config['User']}!", config["prompt_color"]))
 			if not config["danger_zone"]["dont_read_pyshrc"]:
 				try:
 					exec(config_py_path.read_text())
@@ -373,6 +371,10 @@ if len(sys.argv) > 1:
 		tempargs = sys.argv[2:]
 		main(tempargs)
 else:
+	if config["entry_message"] == "legacy":
+		print(colored(f"Welcome to the python terminal, {config['User']}!", config["prompt_color"]))
+	elif config["entry_message"] == "on":
+		print(colored(f"Welcome to Pysh, {config['User']}!", config["prompt_color"]))
 	if not config["danger_zone"]["dont_read_pyshrc"]:
 		try:
 			exec(config_py_path.read_text())
