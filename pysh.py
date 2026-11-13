@@ -109,12 +109,6 @@ elif config["entry_message"] == "on":
 	print(colored(f"Welcome to Pysh, {config['User']}!", config["prompt_color"]))
 change = False
 
-if not config["danger_zone"]["dont_read_pyshrc"]:
-	try:
-		exec(config_py_path.read_text())
-	except Exception as e:
-		print(colored(f"Pysh: Error: Error when executing pyshrc: {e}", "red"))
-
 
 def main(argv="noargs"):
 	change = False
@@ -371,7 +365,17 @@ if len(sys.argv) > 1:
 			print(f"Pysh: Error: Unknown arg {sys.argv[1]}.")
 
 		else:
-			tempargs = sys.argv[2:]
-			main(tempargs)
+			if not config["danger_zone"]["dont_read_pyshrc"]:
+				try:
+					exec(config_py_path.read_text())
+				except Exception as e:
+					print(colored(f"Pysh: Error: Error when executing pyshrc: {e}", "red"))
+		tempargs = sys.argv[2:]
+		main(tempargs)
 else:
+	if not config["danger_zone"]["dont_read_pyshrc"]:
+		try:
+			exec(config_py_path.read_text())
+		except Exception as e:
+			print(colored(f"Pysh: Error: Error when executing pyshrc: {e}", "red"))
 	main()
