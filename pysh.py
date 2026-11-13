@@ -362,8 +362,16 @@ def main(argv="noargs"):
 
 
 if len(sys.argv) > 1:
-	tempargs = sys.argv[1:]
+	if sys.argv[1] != "-c":
+		exec(Path(sys.argv[1]).read_text())
+	elif sys.argv[1] == "-h":
+		main(["help"])
+	else:
+		if sys.argv[1].startswith("-"):
+			print(f"Pysh: Error: Unknown arg {sys.argv[1]}.")
 
-	main(tempargs)
+		else:
+			tempargs = sys.argv[2:]
+			main(tempargs)
 else:
 	main()
