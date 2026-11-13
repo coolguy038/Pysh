@@ -2,18 +2,23 @@
 
 ## This is a shell coded entirely in Python
 
-![alt text](logo.png) Pysh is a Python-based shell tailored for Python development
+<div align="center">
+  
+![alt text](logo.png)
 
-![alt text](image.png)
+</div>
 
-Reasons to use Pysh:
+### Overview
 
-1. It has tools for Python development;
-2. It is cross-platform;
-3. It has native uv support;
-4. Self-updating;
-5. It can run `.py` and `.pysh` files natively;
-6. And it is customizable.
+Pysh is a shell made out of pure Python. It has tools for building and packaging Python projects and has an updater (if you download it via the bundle).
+
+### Why?
+
+Some reasons you would want to install this:
+- Python tooling
+- Easy but powerful configuration (~/.pysh.toml and ~/.pyshrc)
+- Cross-platform
+- Plugin support (soon)
 
 ## Pythoner
 
@@ -23,14 +28,14 @@ It was extracted from pysh.<br>
 
 ## Installation
 
-[To install Pysh, click this link and find your OS release](https://github.com/cadeymatignas-source/pysh/releases/latest).<br>
-Alternatively, you can run the `pyshupdate` CLI included in the zip file.
+[To install Pysh, click this link and find your OS's release](https://github.com/cadeymatignas-source/pysh/releases/latest).<br>
+Or, you could run the `pyshupdate` CLI included in the bundle.
 
 ```bash
 pyshupdate
 ```
 
-For Pythoner, just run this:
+To install pythoner:
 
 ```bash
 pip install pythoner
