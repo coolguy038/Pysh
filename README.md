@@ -17,7 +17,7 @@ Some reasons you would want to install this:
 - Python tooling
 - Easy but powerful configuration (~/.pysh.toml and ~/.pyshrc)
 - Cross-platform
-- Plugin support (soon)
+- Plugin support
 
 ## Pythoner
 
