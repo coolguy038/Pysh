@@ -51,5 +51,5 @@ def main():
 
 				exec("\n".join(block))
 
-			except Exception as e:
+			except BaseException as e:
 				print(colored(f"Pythoner encountered an error: {type(e)}: {e}", "red"))

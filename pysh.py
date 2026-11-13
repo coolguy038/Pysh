@@ -326,11 +326,11 @@ def main(argv="noargs"):
 				else:
 					plugins = config.get("plugins", {})
 
-				for plugin_name, plugin_code in plugins.items():
-					try:
-						exec(plugin_code)
-					except Exception as e:
-						print(colored(f"Pysh: Error: Error while executing plugin {plugin_name}: {e}", "red"))
+					for plugin_name, plugin_code in plugins.items():
+						try:
+							exec(plugin_code)
+						except Exception as e:
+							print(colored(f"Pysh: Error: Error while executing plugin {plugin_name}: {e}", "red"))
 					if config["AUTOCD"]:
 						try:
 							os.chdir(expand_vars(command))
