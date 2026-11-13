@@ -108,8 +108,12 @@ if config["entry_message"] == "legacy":
 elif config["entry_message"] == "on":
 	print(colored(f"Welcome to Pysh, {config['User']}!", config["prompt_color"]))
 change = False
+
 if not config["danger_zone"]["dont_read_pyshrc"]:
-	exec(config_py_path.read_text())
+	try:
+		exec(config_py_path.read_text())
+	except Exception as e:
+		print(colored(f"Pysh: Error: Error when executing pyshrc: {e}", "red"))
 
 
 def main(argv="noargs"):
@@ -175,19 +179,12 @@ def main(argv="noargs"):
 
 				elif command.startswith("pyexe "):
 					pyn = command[6:].strip()
-					pynn = subprocess.run(
-						[config["shell"], config["arg"], f"pyinstaller --onefile {pyn}"], stdin=sys.stdin, stdout=sys.stdout, stderr=sys.stderr
-					)
+					pynn = subprocess.run(f"pyinstaller {pyn}", shell=True, stdin=sys.stdin, stdout=sys.stdout, stderr=sys.stderr)
 					if pynn.returncode != 0:
 						down = input("Oh no! Pyinstaller failed. Download? (y/N)")
 						match down.lower():
 							case "y":
-								subprocess.run(
-									[config["shell"], config["arg"], "pip install pyinstaller"],
-									stdin=sys.stdin,
-									stdout=sys.stdout,
-									stderr=sys.stderr,
-								)
+								subprocess.run("pip install pyinstaller", stdin=sys.stdin, stdout=sys.stdout, stderr=sys.stderr, shell=True)
 							case "n":
 								print("Ok")
 						success = False
@@ -363,7 +360,10 @@ def main(argv="noargs"):
 
 if len(sys.argv) > 1:
 	if sys.argv[1] != "-c":
-		exec(Path(sys.argv[1]).read_text())
+		try:
+			exec(Path(sys.argv[1]).read_text())
+		except Exception as e:
+			print(colored(f"Pysh: Error: Error while executing file {sys.argv[1]}: {e}", "red"))
 	elif sys.argv[1] == "-h":
 		main(["help"])
 	else:
