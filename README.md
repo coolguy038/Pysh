@@ -3,9 +3,7 @@
 ## This is a shell coded entirely in Python
 
 <div align="center">
-  
-![alt text](logo.png)
-
+  <img src="logo.png" alt="alt text">
 </div>
 
 ### Overview
@@ -15,6 +13,7 @@ Pysh is a shell made out of pure Python. It has tools for building and packaging
 ### Why?
 
 Some reasons you would want to install this:
+
 - Python tooling
 - Easy but powerful configuration (~/.pysh.toml and ~/.pyshrc)
 - Cross-platform
