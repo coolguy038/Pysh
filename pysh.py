@@ -88,6 +88,7 @@ if not config_py_path.exists():
 	config_py_path.write_text("# Put code here, to run once before the main code.")
 
 with config_path.open("rb") as f:
+	global config
 	config = tomllib.load(f)
 
 
@@ -105,6 +106,7 @@ if config["danger_zone"]["dont_start"]:
 
 
 def main(argv="noargs"):
+	global config
 	change = False
 	while True:
 		try:
@@ -322,6 +324,13 @@ def main(argv="noargs"):
 					subprocess.run("cls" if platform == "nt" else "clear", stdin=sys.stdin, stdout=sys.stdout, stderr=sys.stderr, shell=True)
 
 				else:
+					plugins = config.get("plugins", {})
+
+				for plugin_name, plugin_code in plugins.items():
+					try:
+						exec(plugin_code)
+					except Exception as e:
+						print(colored(f"Pysh: Error: Error while executing plugin {plugin_name}: {e}", "red"))
 					if config["AUTOCD"]:
 						try:
 							os.chdir(expand_vars(command))
