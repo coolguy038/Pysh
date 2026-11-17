@@ -3,7 +3,7 @@ requires = ["uv_build>=0.12.21,<0.14"]
 build-backend = "uv_build"
 
 [project]
-name = "coolguy038/pysh"
+name = "coolguy038_pysh"
 version = "0.2.9.1"
 authors = [{ name = "Cade", email = "cadey.matignas@gmail.com" }]
 description = 'A custom python shell (pronounced like "fysh")'
