@@ -14,42 +14,43 @@ def main():
 	print(sys.version)
 
 	while True:
-		pyi = prompt("> ", lexer=PygmentsLexer(PythonLexer))
+		try:
+			pyi = prompt("> ", lexer=PygmentsLexer(PythonLexer))
 
-		if pyi.lower() in ("exit", "exit()"):
-			break
+			if pyi.lower() in ("exit", "exit()"):
+				break
 
-		elif pyi.lower() in ("cls", "clear"):
-			if platform == "nt":
-				run("cls", shell=True)
+			elif pyi.lower() in ("cls", "clear"):
+				if platform == "nt":
+					run("cls", shell=True)
+				else:
+					run("clear", shell=True)
+
+			elif pyi.startswith(("pip ", "uv ")):
+				run(
+					pyi,
+					shell=True,
+					stdin=sys.stdin,
+					stdout=sys.stdout,
+					stderr=sys.stderr,
+				)
+
 			else:
-				run("clear", shell=True)
+				try:
+					exec(pyi)
 
-		elif pyi.startswith(("pip ", "uv ")):
-			run(
-				pyi,
-				shell=True,
-				stdin=sys.stdin,
-				stdout=sys.stdout,
-				stderr=sys.stderr,
-			)
+				except IndentationError:
+					block = [pyi]
 
-		else:
-			try:
-				exec(pyi)
+					while True:
+						extra = prompt("-> ", lexer=PygmentsLexer(PythonLexer))
+	
+						if not extra:
+							break
 
-			except IndentationError:
-				block = [pyi]
+						block.append(extra)
 
-				while True:
-					extra = prompt("-> ", lexer=PygmentsLexer(PythonLexer))
+					exec("\n".join(block))
 
-					if not extra:
-						break
-
-					block.append(extra)
-
-				exec("\n".join(block))
-
-			except BaseException as e:
+		except BaseException as e:
 				print(colored(f"Pythoner encountered an error: {type(e)}: {e}", "red"))
