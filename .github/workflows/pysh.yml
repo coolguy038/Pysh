@@ -4,6 +4,8 @@ on:
  push:
   tags:
   - "v*"
+  paths:
+  - ".github/workflows/pysh.yml"
 permissions:
  contents: write
 
@@ -34,7 +36,7 @@ jobs:
       - name: move pysh lin
         if: runner.os == 'Linux'
         run: |
-          mv src/coolguy038_pysh/pysh.py ~$GITHUB_WORKSPACE
+          mv src/coolguy038_pysh/pysh.py $GITHUB_WORKSPACE
       - name: move pysh mac
         if: runner.os == 'MacOS'
         run: |
