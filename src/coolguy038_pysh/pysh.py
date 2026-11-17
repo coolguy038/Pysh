@@ -1,13 +1,15 @@
-lazy import os
-lazy import re
-lazy import shlex
-lazy import subprocess
-lazy import sys
-lazy import time
-lazy import tomllib
-lazy from pathlib import Path
+__lazy_modules__ = ["os", "re", "sys", "shlex", "subprocess", "time", "tomllib", "pathlib", "termcolor"]
 
-lazy from termcolor import colored
+import os
+import re
+import shlex
+import subprocess
+import sys
+import time
+import tomllib
+from pathlib import Path
+
+from termcolor import colored
 
 platform = os.name
 system = sys.platform
