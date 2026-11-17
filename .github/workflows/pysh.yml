@@ -21,6 +21,20 @@ jobs:
         with:
           python-version: "3.15"
 
+      - name: move pysh win
+        if: runner.os == 'Windows'
+        shell: pwsh
+        run: |
+          Move-Item src/pysh/pysh.py %USERPROFLE%
+      - name: move pysh lin
+        if: runner.os == 'Linux'
+        run: |
+          mv src/pysh/pysh.py $HOME
+      - name: move pysh mac
+        if: runner.os == 'MacOS'
+        run: |
+          mv src/pysh/pysh.py $HOME
+
       - name: Install dependencies
         run: |
           pip install --upgrade pyinstaller termcolor pygments
