@@ -37,7 +37,7 @@ pyshupdate
 You can also install pysh via pypi:
 
 ```bash
-pipx install coolguy038/pysh
+pipx install coolguy038_pysh
 ```
 
 To install pythoner:
