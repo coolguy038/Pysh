@@ -34,6 +34,12 @@ Or, you could run the `pyshupdate` CLI included in the bundle.
 pyshupdate
 ```
 
+You can also install pysh via pypi:
+
+```bash
+pipx install coolguy038/pysh
+```
+
 To install pythoner:
 
 ```bash
