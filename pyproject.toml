@@ -21,4 +21,4 @@ Homepage = "https://github.com/cadeymatignas-source/pysh"
 
 
 [project.scripts]
-pysh = "pysh.cli:main"
+pysh = "coolguy038_pysh.cli:main"
