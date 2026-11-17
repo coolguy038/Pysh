@@ -25,7 +25,7 @@ jobs:
         if: runner.os == 'Windows'
         shell: pwsh
         run: |
-          Move-Item src/coolguy038_pysh/pysh.py %USERPROFLE%/work/Pysh/Pysh
+          Move-Item src/coolguy038_pysh/pysh.py $env:USERPROFLE/work/Pysh/Pysh
       - name: move pysh lin
         if: runner.os == 'Linux'
         run: |
