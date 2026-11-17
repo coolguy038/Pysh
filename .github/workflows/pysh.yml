@@ -1,6 +1,11 @@
 name: Build Pysh
 
-on: push
+on: 
+ push:
+  tags:
+  - "v*"
+permissions:
+ contents: write
 
 jobs:
   build:
@@ -25,15 +30,15 @@ jobs:
         if: runner.os == 'Windows'
         shell: pwsh
         run: |
-          Move-Item src/coolguy038_pysh/pysh.py $env:USERPROFLE/work/Pysh/Pysh
+          Move-Item src/coolguy038_pysh/pysh.py $env:GITHUB_WORKSPACE
       - name: move pysh lin
         if: runner.os == 'Linux'
         run: |
-          mv src/coolguy038_pysh/pysh.py ~/work/Pysh/Pysh
+          mv src/coolguy038_pysh/pysh.py ~$GITHUB_WORKSPACE
       - name: move pysh mac
         if: runner.os == 'MacOS'
         run: |
-          mv src/coolguy038_pysh/pysh.py ~/work/Pysh/Pysh
+          mv src/coolguy038_pysh/pysh.py $GITHUB_WORKSPACE
 
       - name: Install dependencies
         run: |
@@ -74,3 +79,25 @@ jobs:
           path: |
             dist/*
             update/dist/*
+  release:
+    needs: build
+    if: startsWith(github.ref, 'refs/tags/v')
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+      - name: Download all artifacts
+        uses: actions/download-artifact@v4
+        with:
+          path: release-assets
+
+      - name: Draft GitHub release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ github.ref_name }}
+          name: ${{ github.ref_name }}
+          draft: true
+          generate_release_notes: true
+          files: |
+            release-assets/**/*
