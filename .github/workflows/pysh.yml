@@ -4,8 +4,7 @@ on:
  push:
   tags:
   - "v*"
-  paths:
-  - ".github/workflows/pysh.yml"
+
 permissions:
  contents: write
 
