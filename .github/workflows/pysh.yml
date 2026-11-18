@@ -5,8 +5,7 @@ on:
   tags:
   - "v*"
 
-permissions:
- contents: write
+
 
 jobs:
   build:
@@ -61,25 +60,46 @@ jobs:
         run: |
           cd update
           pyinstaller pyshupdate.spec
-      - name: Upload standalone
+      - name: Package release archives
+        shell: pwsh
+        run: |
+          @'
+          from pathlib import Path
+          from zipfile import ZipFile, ZIP_DEFLATED
+          import os
+
+          platform = {
+              "Windows": "windows",
+              "Linux": "linux",
+              "macOS": "macos",
+          }[os.environ["RUNNER_OS"]]
+
+          output = Path("release-zips")
+          output.mkdir(exist_ok=True)
+
+          def add_files(archive, directory, prefix=""):
+              directory = Path(directory)
+              for file in directory.rglob("*"):
+                  if file.is_file():
+                      archive.write(file, (Path(prefix) / file.relative_to(directory)).as_posix())
+
+          for source, filename in [
+              ("dist", f"pysh-{platform}.zip"),
+              ("update/dist", f"pysh-installer-{platform}.zip"),
+          ]:
+              with ZipFile(output / filename, "w", ZIP_DEFLATED) as archive:
+                  add_files(archive, source)
+
+          with ZipFile(output / f"pysh-bundle-{platform}.zip", "w", ZIP_DEFLATED) as archive:
+              add_files(archive, "dist", "Pysh")
+              add_files(archive, "update/dist", "Installer")
+          '@ | python -
+
+      - name: Upload release ZIP
         uses: actions/upload-artifact@v4
         with:
-          name: Pysh-${{ runner.os }}
-          path: |
-            dist/*
-      - name: Upload installer
-        uses: actions/upload-artifact@v4
-        with:
-          name: Installer-${{ runner.os }}
-          path: |
-            update/dist/*
-      - name: Upload bundle
-        uses: actions/upload-artifact@v4
-        with:
-          name: Pysh-Bundle-${{ runner.os }}
-          path: |
-            dist/*
-            update/dist/*
+          name: Pysh-ZIP-${{ runner.os }}
+          path: release-zips/*.zip
   release:
     needs: build
     if: startsWith(github.ref, 'refs/tags/v')
@@ -101,4 +121,4 @@ jobs:
           draft: true
           generate_release_notes: true
           files: |
-            release-assets/**/*
+            release-assets/**/*.zip
